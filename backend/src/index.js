@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-import globalErrorHandler from './middlewares/globalErrorHandler';
+import globalErrorHandler from './middlewares/globalErrorHandler.js';
 
 //  create express app 
 const app = express();

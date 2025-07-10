@@ -1,23 +1,19 @@
-import mongoose from 'mongoose'
+import mongoose from 'mongoose';
 import envConfig from './envConfig.js'
 
-
-
-
 const connectDb = async () => {
-
   try {
-    await mongoose.connect("mongodb://localhost:27017", {
+    await mongoose.connect(envConfig.mongo_uri, {
       dbName: envConfig.db_name,
-      maxPoolSize: 10,
-      minDHSize: 2,
-      serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 4900
     });
-    console.log(" ✅ Database connected successfully!");
+    
+    console.log("Database connected successfully!");
+    return true;
   } catch (error) {
-    console.log(` ❌ Failed to connect Database ${error}`)
+    console.error("Failed to connect to database!", error);
+    process.exit(1);
   }
 }
 
+// export connectDb 
 export default connectDb;
