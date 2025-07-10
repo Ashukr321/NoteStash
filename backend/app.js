@@ -1,6 +1,7 @@
 import app from './src/index.js'
 import envConfig from './src/config/envConfig.js'
 import connectDb from './src/config/connectDb.js'
+
 // start server 
 const startServer = async () => {
   try {
