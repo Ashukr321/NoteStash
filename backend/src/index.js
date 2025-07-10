@@ -1,6 +1,6 @@
 import express from 'express';
 import cors from 'cors';
-
+import globalErrorHandler from './middlewares/globalErrorHandler';
 
 //  create express app 
 const app = express();
@@ -28,6 +28,6 @@ app.get('/', (req, res, next) => {
 });
 
 // global errorHandler 
-
+app.use(globalErrorHandler);
 // export app 
 export default app;

@@ -1,18 +1,22 @@
 import mongoose from 'mongoose'
 import envConfig from './envConfig.js'
 
+
+
+
 const connectDb = async () => {
+
   try {
-    await mongoose.connect(envConfig.mongo_uri, {
+    await mongoose.connect("mongodb://localhost:27017", {
+      dbName: envConfig.db_name,
       maxPoolSize: 10,
-      minPoolSize: 2,
+      minDHSize: 2,
       serverSelectionTimeoutMS: 5000,
-      socketTimeoutMS: 45000,
+      socketTimeoutMS: 4900
     });
-    console.log("✅ Mongodb Database connection successful! (Thread pool enabled)");
+    console.log(" ✅ Database connected successfully!");
   } catch (error) {
-    console.error("❌ Failed to connect to MongoDB database!", error);
-    process.exit(1);
+    console.log(` ❌ Failed to connect Database ${error}`)
   }
 }
 
