@@ -1,0 +1,47 @@
+{
+  "name": "backend",
+  "version": "1.0.0",
+  "description": "NoteStash is a full-stack note-taking web application that enables users to create, organize, and manage notes in a secure and intuitive environment. Built with the MERN stack, the app offers user authentication, profile management, note categorization (tags, pinned, archived), and responsive UI for productivity on the go.",
+  "keywords": [
+    "notes-app",
+    "note-taking",
+    "fullstack",
+    "javascript",
+    "nextjs",
+    "express",
+    "mongodb",
+    "tailwindcss",
+    "nodejs",
+    "authentication",
+    "jwt",
+    "rest-api",
+    "productivity",
+    "note-management",
+    "secure-notes",
+    "user-auth",
+    "noteStash"
+  ],
+  "homepage": "https://github.com/Ashukr321/NoteStash#readme",
+  "bugs": {
+    "url": "https://github.com/Ashukr321/NoteStash/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashukr321/NoteStash.git"
+  },
+  "license": "ISC",
+  "author": "ck\",",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.16.2"
+  }
+}
