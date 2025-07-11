@@ -2,19 +2,22 @@ import express from 'express';
 import cors from 'cors';
 import globalErrorHandler from './middlewares/globalErrorHandler.js';
 
+
+// import routes 
+import userRoutes from '../src/modules/user/user.routes.js'
 //  create express app 
 const app = express();
 // middleware 
-app.use(express.json());
+app.use(express.json()); // parse the request body
+
 app.use(cors({
   origin: '*'
 }))
 
 
-const baseUrl = '/api/v1'
+const baseUrl = '/api'
 // routes 
-
-
+app.use(`${baseUrl}/users`, userRoutes);
 
 // default route
 app.get('/', (req, res, next) => {
