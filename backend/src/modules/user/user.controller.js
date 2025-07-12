@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import createError from 'http-errors';
 import envConfig from "../../config/envConfig.js";
 import { create } from "domain";
+import { userInfo } from "os";
 //users business logics
 
 //registerUser
@@ -71,8 +72,15 @@ const loginUser = async (req, res, next) => {
       const err = createError(400, "User does't Exists");
       return next(err);
     }
+
+    // we have to check password 
+    const verifyPassword = await bcrypt.compare(password,userExits.password);
+    if(!verifyPassword){
+      const err = createError(400,"Password is Invalid!");
+      return next(err);
+    }
     // create token 
-    const token = jwt.sign({ userId: userExits._id }, envConfig.jwt_secret, {
+    const token =  jwt.sign({ userId: userExits._id }, envConfig.jwt_secret, {
       expiresIn: envConfig.jwt_expire_time
     })
     // response
@@ -114,7 +122,55 @@ const changeUserName = async (req, res, next) => {
 
 //changePassword
 const changePassword = async (req, res, next) => {
-  return res.json({ message: "Password changed successfully" });
+  try {
+    const { currentPassword, newPassword, confirmNewPassword } = req.body;
+    // validation check
+    if (!currentPassword) {
+      const err = createError(400, "currentPassword is Required!");
+      return next(err);
+    }
+    if (!newPassword) {
+      const err = createError(400, "newPassword is Required!");
+      return next(err);
+    }
+    if (!confirmNewPassword) {
+      const err = createError(400, "confirmPassword is Required!");
+      return next(err);
+    }
+
+    // check newPassword === confirmPassword or not 
+    if (newPassword !== confirmNewPassword) {
+      const err = createError(400, "Password doesn't match");
+      return next(err);
+    }
+
+    // get User 
+    const userId = req.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      const err = createError(400, "User doesn't Exist");
+      return next(err);
+    }
+
+    // Check if current password is correct
+    const verifyPassword = await bcrypt.compare(currentPassword, user.password);
+    if (!verifyPassword) {
+      const err = createError(400, "Current password doesn't match");
+      return next(err);
+    }
+
+
+    // Hash new password and update
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword; // FIX: assign, not await
+    await user.save();
+
+    return res.json({ 
+      message: "Password changed successfully " 
+    });
+  } catch (error) {
+    next(error);
+  }
 };
 
 
