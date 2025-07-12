@@ -74,13 +74,13 @@ const loginUser = async (req, res, next) => {
     }
 
     // we have to check password 
-    const verifyPassword = await bcrypt.compare(password,userExits.password);
-    if(!verifyPassword){
-      const err = createError(400,"Password is Invalid!");
+    const verifyPassword = await bcrypt.compare(password, userExits.password);
+    if (!verifyPassword) {
+      const err = createError(400, "Password is Invalid!");
       return next(err);
     }
     // create token 
-    const token =  jwt.sign({ userId: userExits._id }, envConfig.jwt_secret, {
+    const token = jwt.sign({ userId: userExits._id }, envConfig.jwt_secret, {
       expiresIn: envConfig.jwt_expire_time
     })
     // response
@@ -165,11 +165,11 @@ const changePassword = async (req, res, next) => {
     user.password = hashedPassword; // FIX: assign, not await
     await user.save();
 
-    return res.json({ 
-      message: "Password changed successfully " 
+    return res.json({
+      message: "Password changed successfully "
     });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 };
 
@@ -177,7 +177,18 @@ const changePassword = async (req, res, next) => {
 
 //deleteAccount
 const deleteAccount = async (req, res, next) => {
-  return res.json({ message: "Account deleted successfully" });
+  try {
+    const userId = req.userId;
+    const userExits = User.findById(userId);
+    if (!userExits) {
+      const err = createError(400, "User Does't exits");
+      return next(err);
+    }
+    await User.deleteOne(userExits);
+    return res.json({ success: true, message: "Account deleted successfully" });
+  } catch (error) {
+    return next(error)
+  }
 };
 
 
