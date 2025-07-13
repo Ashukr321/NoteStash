@@ -23,6 +23,7 @@ backend/
       │   └── envConfig.js
       ├── index.js
       ├── middlewares/
+      │   ├── authMiddleware.js
       │   └── globalErrorHandler.js
       └── modules/
           ├── note/
