@@ -1,6 +1,6 @@
 import Notes from "./note.model.js";
 import createError from 'http-errors'
-// create Notes 
+// 1. create Notes 
 const createNotes = async (req, res, next) => {
   try {
     const { title, content, isPinned, isArchived, isStarred, attachments, tags } = req.body;
@@ -42,7 +42,7 @@ const createNotes = async (req, res, next) => {
   }
 }
 
-// getAllNotes 
+// 2. getAllNotes 
 const getAllNotes = async (req, res, next) => {
   try {
     const userId = req.userId;
@@ -54,7 +54,7 @@ const getAllNotes = async (req, res, next) => {
       return next(err);
     }
 
-    
+
     page = parseInt(page);
     limit = parseInt(limit);
 
@@ -81,10 +81,38 @@ const getAllNotes = async (req, res, next) => {
       totalNotes: totalNotes,
       totalNumberOfPage: totalNumberOfPage
     });
-    
+
   } catch (error) {
     return next(error);
   }
 }
-export { createNotes, getAllNotes }
+
+// 3. getNoteById
+const getNoteById = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    if (!id) {
+      const err = createError(400, "Note Id is required! (Note Id jaruri hai)");
+      return next(err);
+    }
+    const note = await Notes.findOne({ _id: id, user: userId });
+    if (!note) {
+      const err = createError(404, "Note not found or access denied! (");
+      return next(err);
+    }
+    return res.status(200).json({
+      success: true,
+      message: "Note fetched successfully!",
+      note: note
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+
+
+export { createNotes, getAllNotes, getNoteById }
 
