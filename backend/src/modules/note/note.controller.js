@@ -230,7 +230,7 @@ const toggleStarredNote = async (req, res, next) => {
 }
 
 //  7 .addToArchive
-const addToArchive = async(req,res,next)=>{
+const addToArchive = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { isArchived } = req.body;
@@ -268,6 +268,60 @@ const addToArchive = async(req,res,next)=>{
   }
 }
 
+// update note 
+const updateNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+    const {
+      title,
+      content,
+      tags,
+      isPinned,
+      isArchived,
+      isStarred,
+    } = req.body;
 
-export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote,addToArchive }
+    // Check note ownership
+    const note = await Notes.findOne({ _id: id, user: userId });
+    if (!note) {
+      const err = createError(404, "Note not found or access denied!");
+      return next(err);
+    }
+
+    // Prepare update object
+    const updateNoteObject = {};
+    if (title !== undefined) updateNoteObject.title = title;
+    if (content !== undefined) updateNoteObject.content = content;
+    if (tags !== undefined) updateNoteObject.tags = tags;
+    if (isPinned !== undefined) updateNoteObject.isPinned = isPinned;
+    if (isArchived !== undefined) updateNoteObject.isArchived = isArchived;
+    if (isStarred !== undefined) updateNoteObject.isStarred = isStarred;
+    // Update the note
+    const updatedNote = await Notes.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: updateNoteObject },
+      { new: true }
+    );
+
+    if (!updatedNote) {
+      const err = createError(500, "Failed to update note!");
+      return next(err);
+    }
+
+    const updatedNoteResponse = updatedNote.toObject();
+    delete updatedNoteResponse.user;
+
+    return res.status(200).json({
+      success: true,
+      message: "Note updated successfully!",
+      note: updatedNoteResponse
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
+
+
+export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote, addToArchive, updateNote }
 
