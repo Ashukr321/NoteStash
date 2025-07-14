@@ -2,10 +2,10 @@ import express from 'express';
 import cors from 'cors';
 import globalErrorHandler from './middlewares/globalErrorHandler.js';
 
-
 // import routes 
 import userRoutes from '../src/modules/user/user.routes.js'
 import profileRoutes from '../src/modules/profile/profile.routes.js'
+import noteRoutes from '../src/modules/note/note.routes.js'
 //  create express app 
 const app = express();
 // middleware 
@@ -20,6 +20,7 @@ const baseUrl = '/api'
 // routes 
 app.use(`${baseUrl}/users`, userRoutes);
 app.use(`${baseUrl}/profiles`, profileRoutes);
+app.use(`${baseUrl}/notes`, noteRoutes);
 
 // default route
 app.get('/', (req, res, next) => {
