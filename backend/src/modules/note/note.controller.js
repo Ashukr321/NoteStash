@@ -190,6 +190,7 @@ const togglePinNote = async (req, res, next) => {
   }
 }
 
+// 6 toggleStarredNote
 const toggleStarredNote = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -228,5 +229,45 @@ const toggleStarredNote = async (req, res, next) => {
   }
 }
 
-export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote }
+//  7 .addToArchive
+const addToArchive = async(req,res,next)=>{
+  try {
+    const { id } = req.params;
+    const { isArchived } = req.body;
+    const userId = req.userId;
+
+    // Check if note id is provided
+    if (!id) {
+      const err = createError(400, "Note Id is required!");
+      return next(err);
+    }
+
+    // Find the note and check ownership
+    const note = await Notes.findOne({ _id: id, user: userId });
+    if (!note) {
+      const err = createError(404, "Note not found or access denied!");
+      return next(err);
+    }
+
+    // Update the isStarred status
+    const updatedNote = await Notes.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: { isArchived: isArchived } },
+      { new: true }
+    );
+    const updatedNoteResponse = updatedNote.toObject();
+    delete updatedNoteResponse.user;
+
+    return res.status(200).json({
+      success: true,
+      message: "Note starred status updated successfully!",
+      note: updatedNoteResponse,
+    })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+
+export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote,addToArchive }
 
