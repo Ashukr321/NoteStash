@@ -68,6 +68,12 @@ const getAllNotes = async (req, res, next) => {
       .skip(skip)
       .limit(limit);
 
+    // allNotes is an array, so we need to map over it to remove the user field from each note
+    const notesResponse = allNotes.map(note => {
+      const noteObj = note.toObject();
+      delete noteObj.user;
+      return noteObj;
+    });
     // Get total count of notes for the user
     const totalNotes = await Notes.countDocuments({ user: userId });
     const totalNumberOfPage = Math.ceil(totalNotes / limit);
@@ -75,7 +81,7 @@ const getAllNotes = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Notes fetched successfully!",
-      notes: allNotes,
+      notes: notesResponse,
       page: page,
       limit: limit,
       totalNotes: totalNotes,
@@ -98,6 +104,10 @@ const getNoteById = async (req, res, next) => {
       return next(err);
     }
     const note = await Notes.findOne({ _id: id, user: userId });
+
+    const noteResponse = note.toObject();
+    delete noteResponse.user;
+
     if (!note) {
       const err = createError(404, "Note not found or access denied! (");
       return next(err);
@@ -105,7 +115,7 @@ const getNoteById = async (req, res, next) => {
     return res.status(200).json({
       success: true,
       message: "Note fetched successfully!",
-      note: note
+      note: noteResponse
     });
   } catch (error) {
     return next(error);
@@ -166,10 +176,13 @@ const togglePinNote = async (req, res, next) => {
       { new: true }
     );
 
+    const updatedNoteResponse = updatedNote.toObject();
+    delete updatedNoteResponse.user;
+
     return res.status(200).json({
       success: true,
       message: "Note pin status updated successfully!",
-      note: updatedNote
+      note: updatedNoteResponse
     });
 
   } catch (error) {
@@ -177,5 +190,43 @@ const togglePinNote = async (req, res, next) => {
   }
 }
 
-export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote }
+const toggleStarredNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { isStarred } = req.body;
+    const userId = req.userId;
+
+    // Check if note id is provided
+    if (!id) {
+      const err = createError(400, "Note Id is required!");
+      return next(err);
+    }
+
+    // Find the note and check ownership
+    const note = await Notes.findOne({ _id: id, user: userId });
+    if (!note) {
+      const err = createError(404, "Note not found or access denied!");
+      return next(err);
+    }
+
+    // Update the isStarred status
+    const updatedNote = await Notes.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: { isStarred: isStarred } },
+      { new: true }
+    );
+    const updatedNoteResponse = updatedNote.toObject();
+    delete updatedNoteResponse.user;
+
+    return res.status(200).json({
+      success: true,
+      message: "Note starred status updated successfully!",
+      note: updatedNoteResponse,
+    })
+  } catch (error) {
+    return next(error)
+  }
+}
+
+export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote }
 
