@@ -112,8 +112,7 @@ const getNoteById = async (req, res, next) => {
   }
 }
 
-// deleteNote 
-// English, Hindi, Hinglish response and correct logic
+// 4.deleteNote 
 const deleteNote = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -124,7 +123,6 @@ const deleteNote = async (req, res, next) => {
       const err = createError(400, "Note id is required!");
       return next(err);
     }
-
     // Find the note and check ownership
     const note = await Notes.findOne({ _id: id, user: userId });
     if (!note) {
@@ -133,7 +131,7 @@ const deleteNote = async (req, res, next) => {
     }
     await Notes.findByIdAndDelete(id);
     return res.status(200).json({
-      success: true, 
+      success: true,
       message: "Note deleted successfully!"
     });
   } catch (error) {
@@ -141,6 +139,43 @@ const deleteNote = async (req, res, next) => {
   }
 }
 
+// 5. togglePinNote
+const togglePinNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { isPinned } = req.body;
+    const userId = req.userId;
 
-export { createNotes, getAllNotes, getNoteById,deleteNote }
+    // Check if note id is provided
+    if (!id) {
+      const err = createError(400, "Note Id is required!");
+      return next(err);
+    }
+
+    // Find the note and check ownership
+    const note = await Notes.findOne({ _id: id, user: userId });
+    if (!note) {
+      const err = createError(404, "Note not found or access denied!");
+      return next(err);
+    }
+
+    // Update the isPinned status
+    const updatedNote = await Notes.findOneAndUpdate(
+      { _id: id, user: userId },
+      { $set: { isPinned: isPinned } },
+      { new: true }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Note pin status updated successfully!",
+      note: updatedNote
+    });
+
+  } catch (error) {
+    return next(error);
+  }
+}
+
+export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote }
 
