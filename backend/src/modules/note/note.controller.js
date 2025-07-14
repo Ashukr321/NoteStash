@@ -112,7 +112,35 @@ const getNoteById = async (req, res, next) => {
   }
 }
 
+// deleteNote 
+// English, Hindi, Hinglish response and correct logic
+const deleteNote = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const userId = req.userId;
+
+    if (!id) {
+      // English + Hindi
+      const err = createError(400, "Note id is required!");
+      return next(err);
+    }
+
+    // Find the note and check ownership
+    const note = await Notes.findOne({ _id: id, user: userId });
+    if (!note) {
+      const err = createError(404, "Note not found or access denied! ");
+      return next(err);
+    }
+    await Notes.findByIdAndDelete(id);
+    return res.status(200).json({
+      success: true, 
+      message: "Note deleted successfully!"
+    });
+  } catch (error) {
+    return next(error);
+  }
+}
 
 
-export { createNotes, getAllNotes, getNoteById }
+export { createNotes, getAllNotes, getNoteById,deleteNote }
 
