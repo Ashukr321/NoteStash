@@ -49,7 +49,7 @@ CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 ```
-
+ 
 ### Installation & Setup
 1. Navigate to the backend directory:
 ```bash
@@ -137,6 +137,8 @@ backend/
   ├── app.js
   ├── package.json
   ├── package-lock.json
+  ├── env.example
+  ├── uploads/
   └── src/
       ├── config/
       │   ├── connectDb.js
@@ -145,6 +147,8 @@ backend/
       ├── middlewares/
       │   ├── authMiddleware.js
       │   └── globalErrorHandler.js
+      ├── utils/
+      │   └── cloudinary.js
       └── modules/
           ├── note/
           │   ├── note.controller.js
