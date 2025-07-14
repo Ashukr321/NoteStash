@@ -42,6 +42,49 @@ const createNotes = async (req, res, next) => {
   }
 }
 
+// getAllNotes 
+const getAllNotes = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    let { page = 1, limit = 10 } = req.query; // default values
 
-export { createNotes }
+    // Check userId
+    if (!userId) {
+      const err = createError(400, "UserId is Required!");
+      return next(err);
+    }
+
+    
+    page = parseInt(page);
+    limit = parseInt(limit);
+
+    if (isNaN(page) || page < 1) page = 1;
+    if (isNaN(limit) || limit < 1) limit = 10;
+
+    const skip = (page - 1) * limit;
+
+    // Find notes for the user with pagination
+    const allNotes = await Notes.find({ user: userId })
+      .skip(skip)
+      .limit(limit);
+
+    // Get total count of notes for the user
+    const totalNotes = await Notes.countDocuments({ user: userId });
+    const totalNumberOfPage = Math.ceil(totalNotes / limit);
+
+    return res.status(200).json({
+      success: true,
+      message: "Notes fetched successfully!",
+      notes: allNotes,
+      page: page,
+      limit: limit,
+      totalNotes: totalNotes,
+      totalNumberOfPage: totalNumberOfPage
+    });
+    
+  } catch (error) {
+    return next(error);
+  }
+}
+export { createNotes, getAllNotes }
 
