@@ -268,7 +268,7 @@ const addToArchive = async (req, res, next) => {
   }
 }
 
-// update note 
+// 8 .update note 
 const updateNote = async (req, res, next) => {
   try {
     const { id } = req.params;
