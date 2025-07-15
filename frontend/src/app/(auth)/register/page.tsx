@@ -1,11 +1,9 @@
-import Main from '@/pages/mainpage/Main'
 import React from 'react'
-
 
 const page = () => {
   return (
     <div>
-      <Main/>
+      <h1>register page</h1>
     </div>
   )
 }
