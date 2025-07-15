@@ -5,3 +5,6 @@
   --foreground: #171717;
 }
 
+html{
+  scroll-behavior: smooth;
+}
