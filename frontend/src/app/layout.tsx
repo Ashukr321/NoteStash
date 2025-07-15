@@ -26,12 +26,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <ThemeProvider>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ThemeProvider>
+        
           {children}
-        </ThemeProvider>
         {/* Toaster with additional properties */}
         <Toaster
           position="top-right"
@@ -56,8 +56,9 @@ export default function RootLayout({
               },
             },
           }}
-        />
+          />
       </body>
+          </ThemeProvider>
     </html>
   );
 }

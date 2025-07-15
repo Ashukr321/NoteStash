@@ -45,7 +45,7 @@ const Navbar = () => {
     <nav className="w-full flex justify-center items-center bg-blue-50 dark:bg-gray-950 transition-colors duration-300 sticky top-0 z-50 py-3 px-2">
       <div className="w-full max-w-3xl md:max-w-4xl lg:max-w-5xl flex items-center justify-between rounded-full shadow-lg bg-white/80 dark:bg-gray-900/80 backdrop-blur-md px-4 py-2 md:py-2 md:px-8 border border-gray-200 dark:border-gray-800 transition-all duration-300">
         {/* Logo */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 relative z-60">
           <TbNotebook size={22} color={darkMode ? "#facc15" : "#2563eb"} />
           <span className="text-lg font-bold text-gray-800 dark:text-white tracking-tight transition-colors duration-300">
             NoteStash
