@@ -6,6 +6,7 @@ import globalErrorHandler from './middlewares/globalErrorHandler.js';
 import userRoutes from '../src/modules/user/user.routes.js'
 import profileRoutes from '../src/modules/profile/profile.routes.js'
 import noteRoutes from '../src/modules/note/note.routes.js'
+import fileRoutes from '../src/modules/fileAttachment/file.route.js'
 //  create express app 
 const app = express();
 // middleware 
@@ -21,6 +22,7 @@ const baseUrl = '/api'
 app.use(`${baseUrl}/users`, userRoutes);
 app.use(`${baseUrl}/profiles`, profileRoutes);
 app.use(`${baseUrl}/notes`, noteRoutes);
+app.use(`${baseUrl}/file`, fileRoutes);
 
 // default route
 app.get('/', (req, res, next) => {
