@@ -1,24 +1,35 @@
-"use client"
-import React, { useState } from 'react';
-import { FaHome } from 'react-icons/fa';
-import { useRouter } from 'next/navigation';
-
+"use client";
+import React, { useState } from "react";
+import { FaHome } from "react-icons/fa";
+import { useRouter } from "next/navigation";
+import userServices from "@/services/users/users.services";
+import toast from "react-hot-toast";
 const RegisterPage = () => {
+
   const router = useRouter();
   const [form, setForm] = useState({
-    UserName: '',
-    email: '',
-    password: '',
+    UserName: "",
+    email: "",
+    password: "",
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle registration logic here
-    alert(JSON.stringify(form, null, 2));
+    try {
+      const resData = await userServices.registerUser(form);
+      if (resData.success) {
+        toast.success(resData.message);
+        router.push("/login");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
   };
 
   return (
@@ -26,7 +37,7 @@ const RegisterPage = () => {
       {/* Home Icon */}
       <button
         className="absolute top-6 left-6 p-2 rounded-full bg-white shadow hover:bg-blue-100 transition-colors"
-        onClick={() => router.push('/')}
+        onClick={() => router.push("/")}
         aria-label="Go Home"
       >
         <FaHome size={24} className="text-blue-600" />
@@ -35,9 +46,16 @@ const RegisterPage = () => {
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white/90 rounded-2xl shadow-xl p-8 flex flex-col gap-6 border border-blue-100"
       >
-        <h2 className="text-2xl font-bold text-blue-700 mb-2 text-center">Create your NoteStash account</h2>
+        <h2 className="text-2xl font-bold text-blue-700 mb-2 text-center">
+          Create your NoteStash account
+        </h2>
         <div className="flex flex-col gap-2">
-          <label htmlFor="UserName" className="text-sm font-medium text-gray-700">Username</label>
+          <label
+            htmlFor="UserName"
+            className="text-sm font-medium text-gray-700"
+          >
+            UserName
+          </label>
           <input
             type="text"
             id="UserName"
@@ -50,7 +68,9 @@ const RegisterPage = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="email" className="text-sm font-medium text-gray-700">Email</label>
+          <label htmlFor="email" className="text-sm font-medium text-gray-700">
+            Email
+          </label>
           <input
             type="email"
             id="email"
@@ -63,7 +83,12 @@ const RegisterPage = () => {
           />
         </div>
         <div className="flex flex-col gap-2">
-          <label htmlFor="password" className="text-sm font-medium text-gray-700">Password</label>
+          <label
+            htmlFor="password"
+            className="text-sm font-medium text-gray-700"
+          >
+            Password
+          </label>
           <input
             type="password"
             id="password"
