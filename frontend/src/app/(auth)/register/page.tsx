@@ -119,6 +119,15 @@ const RegisterPage = () => {
         >
           Register
         </button>
+        <p className="text-center text-sm text-gray-600 mt-2">
+          Already have an account?{' '}
+          <span
+            className="text-blue-600 hover:underline cursor-pointer font-semibold"
+            onClick={() => router.push('/login')}
+          >
+            Login
+          </span>
+        </p>
       </form>
     </section>
   );
