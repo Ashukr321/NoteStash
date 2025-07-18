@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { FaEye, FaEyeSlash, FaEdit, FaSave } from "react-icons/fa";
 const baseUrl = process.env.NEXT_PUBLIC_PUBLIC_API;
 
 const ProfilePage = () => {
@@ -20,10 +20,14 @@ const ProfilePage = () => {
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+
+  const userInfo = Cookies.get("userInfo");
+  const user = JSON.parse(userInfo || "{}");
+  const [userNameInput, setUserNameInput] = useState(user.userName || "");
+  const [isEditingUserName, setIsEditingUserName] = useState(false);
   // Modals
   const [showPasswordModal, setShowPasswordModal] = useState(false);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-
   // change password
   const [passwordForm, setPasswordForm] = useState({
     currentPassword: "",
@@ -120,11 +124,27 @@ const ProfilePage = () => {
     setPasswordForm({ ...passwordForm, [e.target.name]: e.target.value });
   };
 
+  // update userName;
+  const updateUserNameHandler = async () => {
+    try {
+      setLoading(true);
+      const resData = await userServices.changeUserName(userNameInput);
+      if (resData.success) {
+        setLoading(false);
+        toast.success(resData.message);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+    }
+  };
+
   // Change password
   const handleChangePassword = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    
+
     const resData = await userServices.changePassword(
       passwordForm.currentPassword,
       passwordForm.newPassword,
@@ -165,7 +185,7 @@ const ProfilePage = () => {
 
   return (
     <div className="w-full mx-auto p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-      {/* Profile Picture Card */}
+      {/* Profile Picture & Username Card */}
       <div className="w-full bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col items-center sm:w-full sm:col-span-1 md:col-span-1 md:w-full">
         <h2 className="text-lg font-semibold mb-4 w-full text-center">
           Profile Picture
@@ -211,6 +231,45 @@ const ProfilePage = () => {
         >
           {loading ? "Uploading..." : "Add/Update Photo"}
         </button>
+
+        {/* Username Section */}
+        <div className="w-full mt-6 flex flex-col items-center">
+          <label className="block text-sm font-medium mb-1 text-center w-full">
+            Username : {user.UserName}
+          </label>
+          <div className="flex items-center w-full justify-center gap-2">
+            <input
+              type="text"
+              className="border rounded px-3 py-2 text-sm sm:text-base w-2/3 text-center"
+              value={userNameInput}
+              onChange={e => setUserNameInput(e.target.value)}
+              disabled={!isEditingUserName}
+            />
+            <button
+              type="button"
+              className={`ml-2 px-3 py-1 rounded text-sm font-semibold flex items-center justify-center ${
+                isEditingUserName
+                  ? "bg-green-600 hover:bg-green-700 text-white"
+                  : "bg-gray-200 text-gray-700"
+              }`}
+              onClick={() => {
+                if (isEditingUserName) {
+                  updateUserNameHandler();
+                }
+                setIsEditingUserName(!isEditingUserName);
+              }}
+              disabled={loading}
+              aria-label={isEditingUserName ? "Save username" : "Edit username"}
+            >
+              {isEditingUserName ? <FaSave /> : <FaEdit />}
+            </button>
+          </div>
+          <p className="text-xs text-gray-500 mt-1 text-center">
+            {isEditingUserName
+              ? "Enter new username and click Save"
+              : "Click Edit to change your username"}
+          </p>
+        </div>
       </div>
       {/* Profile Info Card */}
       <div className="col-span-1 md:col-span-2 bg-white rounded-lg shadow p-4 sm:p-6 mt-4 md:mt-0">

@@ -137,6 +137,7 @@ const changePassword = async (req, res, next) => {
       const err = createError(400, "newPassword is Required!");
       return next(err);
     }
+
     if (!confirmNewPassword) {
       const err = createError(400, "confirmPassword is Required!");
       return next(err);
@@ -170,7 +171,7 @@ const changePassword = async (req, res, next) => {
     await user.save();
 
     return res.json({
-      success:true,
+      success: true,
       message: "Password changed successfully "
     });
   } catch (error) {
@@ -195,7 +196,6 @@ const deleteAccount = async (req, res, next) => {
     return next(error)
   }
 };
-
 
 // exports all controllers 
 export {

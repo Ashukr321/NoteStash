@@ -3,6 +3,7 @@ import Profile from "./profile.model.js";
 import createError from 'http-errors';
 import cloudinary from "../../utils/cloudinary.js";
 import fs from 'fs';
+import User from '../user/user.model.js'
 // create profile 
 const createProfile = async (req, res, next) => {
   try {
@@ -32,21 +33,35 @@ const createProfile = async (req, res, next) => {
 }
 
 
-// getProfileDetails
 const getProfileDetails = async (req, res, next) => {
   try {
     const userId = req.userId;
     // Find the profile by user field, since one user can have only one profile
-    const profileData = await Profile.findOne({ user: userId });
+    const profileData = await Profile.findOne({ user: userId }).lean().select("-");
     if (!profileData) {
       const err = createError(400, "Profile not found for this user! ");
       return next(err);
     }
+
+    const user = await User.findById(userId).select("-password");
+
+    if (!user) {
+      const err = createError(400, "User not found!");
+      return next(err);
+    }
+
+    // Merge userName and email into response
     return res.status(200).json({
       success: true,
-      message: "Profile data fetched successfully! ",
-      data: profileData
+      message: "Profile data fetched successfully! (UserName and Email included)",
+      data: {
+        userName: user.UserName,
+        email: user.email,
+        ...profileData,
+
+      }
     });
+
   } catch (error) {
     return next(error);
   }
@@ -59,7 +74,7 @@ const updateProfileData = async (req, res, next) => {
 
     // get userId and check UserProfile Exist or not
     const userId = req.userId;
-    
+
     // create profileDataObject 
     const updatedProfileData = {};
     if (req.body.bio !== undefined) updatedProfileData.bio = req.body.bio;

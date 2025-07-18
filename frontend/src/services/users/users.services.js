@@ -42,7 +42,7 @@ const userServices = {
 
 
   // 3. change-username
-  async changeUserName({ UserName }) {
+  async changeUserName( UserName ) {
     try {
       const token = Cookies.get("token");
       const response = await fetch(`${baseUrl}/api/users/change-username`, {
@@ -51,7 +51,7 @@ const userServices = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(UserName)
+        body: JSON.stringify({UserName})
       })
       const resData = await response.json();
       return resData;
