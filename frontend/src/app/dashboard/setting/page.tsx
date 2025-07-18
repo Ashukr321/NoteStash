@@ -30,6 +30,7 @@ const ProfilePage = () => {
     newPassword: "",
     confirmNewPassword: "",
   });
+
   const [showPassword, setShowPassword] = useState(false);
 
   // Handle profile form change
@@ -123,6 +124,7 @@ const ProfilePage = () => {
   const handleChangePassword = async (e: FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    
     const resData = await userServices.changePassword(
       passwordForm.currentPassword,
       passwordForm.newPassword,
