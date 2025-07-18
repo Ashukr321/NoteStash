@@ -4,6 +4,7 @@ import createError from 'http-errors';
 import cloudinary from "../../utils/cloudinary.js";
 import fs from 'fs';
 import User from '../user/user.model.js'
+
 // create profile 
 const createProfile = async (req, res, next) => {
   try {
@@ -33,14 +34,22 @@ const createProfile = async (req, res, next) => {
 }
 
 
+
 const getProfileDetails = async (req, res, next) => {
   try {
-    const userId = req.userId;
+ 
+    const userId =await req.userId;
+    if (!userId) {
+      return res.status(401).json({
+        success: false,
+        message: "Unauthorized: User ID not found in request."
+      });
+    } 
 
     // Fetch user details, exclude password
     const user = await User.findById(userId).select("-password");
     if (!user) {
-      // User not found
+     
       return res.status(404).json({
         success: false,
         message: "User not found!"
@@ -51,7 +60,6 @@ const getProfileDetails = async (req, res, next) => {
     const profileData = await Profile.findOne({ user: userId }).lean().select("-user");
 
     if (!profileData) {
-      // Profile not found, but user exists: return only userName and email
       return res.status(200).json({
         success: true,
         message: "Profile not found for this user!",
@@ -60,8 +68,8 @@ const getProfileDetails = async (req, res, next) => {
           email: user.email
         }
       });
-     
     }
+
 
     // Merge userName and email into response if profile exists
     return res.status(200).json({
