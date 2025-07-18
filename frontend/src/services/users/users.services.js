@@ -45,8 +45,6 @@ const userServices = {
   async changeUserName({ UserName }) {
     try {
       const token = Cookies.get("token");
-
-
       const response = await fetch(`${baseUrl}/api/users/change-username`, {
         method: "PUT",
         headers: {
@@ -65,7 +63,8 @@ const userServices = {
 
 
   // 4. change-password
-  async changePassword( currentPassword, newPassword, confirmNewPassword ) {
+  async changePassword(currentPassword, newPassword, confirmNewPassword) {
+    console.log(currentPassword, newPassword, confirmNewPassword);
     try {
       const token = Cookies.get("token");
       if (!token) {
@@ -77,7 +76,7 @@ const userServices = {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`
         },
-        body: JSON.stringify(currentPassword, newPassword, confirmNewPassword)
+        body: JSON.stringify({ currentPassword, newPassword, confirmNewPassword })
       })
       const resData = await response.json();
       return resData;
