@@ -17,6 +17,23 @@ const userServices = {
     } catch (error) {
       return { success: false, message: error.message };
     }
+  },
+
+  //loginUser
+  async loginUser({ email, password }) {
+    try {
+      const response = await fetch(`${baseUrl}/api/users/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ email, password })
+      })
+      const resData = await response.json();
+      return resData;
+    } catch (error) {
+      return { success: false, message: error.message }
+    }
   }
 }
 
