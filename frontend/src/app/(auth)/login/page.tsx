@@ -27,8 +27,15 @@ const LoginPage = () => {
     // Handle login logic here
     try {
       const resData = await userServices.loginUser(form);
+
       if (resData.success && resData.token) {
         Cookies.set("token", resData.token, {
+          expires: 7,
+          secure: true,
+          path: "/",
+        });
+
+        Cookies.set("userInfo", JSON.stringify(resData.user), {
           expires: 7,
           secure: true,
           path: "/",
