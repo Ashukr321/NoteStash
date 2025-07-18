@@ -15,8 +15,7 @@ app.use(express.json()); // parse the request body
 
 
 app.use(cors({
-  origin: ['*', 'http://localhost:3000', "https://notestash-nine.vercel.app/"],
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD']
+  origin: '*'
 }))
 
 
