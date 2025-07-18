@@ -1,16 +1,15 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent ,useEffect} from "react";
+import React, { useState, ChangeEvent, FormEvent, useEffect } from "react";
 import userServices from "@/services/users/users.services.js";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Cookies from "js-cookie";
 import toast from "react-hot-toast";
 import { FaEye, FaEyeSlash, FaEdit, FaSave } from "react-icons/fa";
-const baseUrl = process.env.NEXT_PUBLIC_PUBLIC_API;
+
+import profileServices from "@/services/profiles/profiles.services";
 
 const ProfilePage = () => {
-
-
   type UserType = { user?: { UserName?: string; email?: string } };
 
   const [userInfo, setUser] = useState<UserType>({});
@@ -20,9 +19,23 @@ const ProfilePage = () => {
       const userInfo = await userServices.getUserInfo();
       setUser(userInfo);
     };
+    const fetchProfile = async () => {
+      const res = await profileServices.getProfileDetails();
+      if (res && res.success && res.data) {
+        setProfile(prev => ({
+          ...prev,
+          bio: res.data.bio || "",
+          dob: res.data.dob ? res.data.dob.slice(0, 10) : "",
+          location: res.data.location || "",
+          address: res.data.address || "",
+          pin_code: res.data.pin_code || "",
+          profilePic: res.data.profilePic || prev.profilePic,
+        }));
+      }
+    };
     fetchUserInfo();
+    fetchProfile();
   }, []);
-
 
   const [profile, setProfile] = useState({
     bio: "",
@@ -32,12 +45,15 @@ const ProfilePage = () => {
     pin_code: "",
     profilePic: "",
   });
+
   const [profilePicFile, setProfilePicFile] = useState<File | null>(null);
+
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  
-  const [userNameInput, setUserNameInput] = useState(userInfo?.user?.UserName || "");
+  const [userNameInput, setUserNameInput] = useState(
+    userInfo?.user?.UserName || ""
+  );
   const [isEditingUserName, setIsEditingUserName] = useState(false);
   // Modals
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -58,37 +74,61 @@ const ProfilePage = () => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
-  // Fetch profile details (optional: on mount)
-  // useEffect(() => { ... }, []);
+  // Helper to check if all profile fields are empty
+  const isProfileEmpty = !profile.bio && !profile.dob && !profile.location && !profile.address && !profile.pin_code && !profile.profilePic;
 
-  // Save profile info only
-  const handleSaveProfile = async (e: FormEvent) => {
+  // Create profile handler
+  const handleCreateProfile = async (e: FormEvent) => {
     e.preventDefault();
-    setLoading(true);
     try {
-      const token =
-        typeof window !== "undefined"
-          ? document.cookie
-              .split("; ")
-              .find(row => row.startsWith("token="))
-              ?.split("=")[1]
-          : null;
-      const response = await fetch(`${baseUrl}/api/profile/update`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-          ...(token ? { Authorization: `Bearer ${token}` } : {}),
-        },
-        body: JSON.stringify(profile),
-      });
-      const res = await response.json();
-      setLoading(false);
-      if (res.success) {
-      } else {
+      const resData = await profileServices.createUserProfile(profile);
+      if (resData.success) {
+        toast.success(resData.message);
+        // Re-fetch profile after creation
+        const res = await profileServices.getProfileDetails();
+        if (res && res.success && res.data) {
+          setProfile(prev => ({
+            ...prev,
+            bio: res.data.bio || "",
+            dob: res.data.dob ? res.data.dob.slice(0, 10) : "",
+            location: res.data.location || "",
+            address: res.data.address || "",
+            pin_code: res.data.pin_code || "",
+            profilePic: res.data.profilePic || prev.profilePic,
+          }));
+        }
       }
-    } catch (error: unknown) {
+    } catch (error) {
       if (error instanceof Error) {
-        setLoading(false);
+        toast.error(error.message);
+      }
+    }
+  };
+
+  // Update profile handler
+  const handleUpdateProfile = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      const resData = await profileServices.updateUserProfile(profile);
+      if (resData.success) {
+        toast.success(resData.message);
+        // Re-fetch profile after update
+        const res = await profileServices.getProfileDetails();
+        if (res && res.success && res.data) {
+          setProfile(prev => ({
+            ...prev,
+            bio: res.data.bio || "",
+            dob: res.data.dob ? res.data.dob.slice(0, 10) : "",
+            location: res.data.location || "",
+            address: res.data.address || "",
+            pin_code: res.data.pin_code || "",
+            profilePic: res.data.profilePic || prev.profilePic,
+          }));
+        }
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
       }
     }
   };
@@ -99,29 +139,10 @@ const ProfilePage = () => {
       setProfilePicFile(e.target.files[0]);
       setLoading(true);
       try {
-        const token =
-          typeof window !== "undefined"
-            ? document.cookie
-                .split("; ")
-                .find(row => row.startsWith("token="))
-                ?.split("=")[1]
-            : null;
         const formData = new FormData();
         formData.append("profilePic", e.target.files[0]);
-        const response = await fetch(`${baseUrl}/api/profile/profile-pic`, {
-          method: "PATCH",
-          headers: {
-            ...(token ? { Authorization: `Bearer ${token}` } : {}),
-          },
-          body: formData,
-        });
-        const res = await response.json();
+
         setLoading(false);
-        if (res.success) {
-          setProfile({ ...profile, profilePic: res.profilePic });
-          setProfilePicFile(null);
-        } else {
-        }
       } catch (error: unknown) {
         if (error instanceof Error) {
           setLoading(false);
@@ -200,12 +221,12 @@ const ProfilePage = () => {
     setShowDeleteModal(false);
   };
 
-  
   return (
     <div className="w-full mx-auto p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Profile Picture & Username Card */}
       <div className="w-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-xl p-6 flex flex-col items-center sm:col-span-1 md:col-span-1 md:w-full border border-blue-200 relative">
         {/* Decorative background circle */}
+
         <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-32 h-32 bg-blue-200 opacity-20 rounded-full z-0"></div>
         {/* Profile Picture */}
         <div className="relative z-10 mt-2">
@@ -234,6 +255,7 @@ const ProfilePage = () => {
               </span>
             )}
           </div>
+
           <input
             type="file"
             accept="image/*"
@@ -252,10 +274,67 @@ const ProfilePage = () => {
             <FaEdit />
           </button>
         </div>
+
+        {/* Display all profile data if present */}
+        {(profile.bio ||
+          profile.dob ||
+          profile.location ||
+          profile.address ||
+          profile.pin_code ||
+          profile.profilePic) && (
+          <div className="w-full mt-4 mb-4 bg-white rounded-lg shadow p-4 flex flex-col gap-2 text-blue-900">
+            {profile.bio && (
+              <div>
+                <span className="font-semibold">Bio:</span> {profile.bio}
+              </div>
+            )}
+            {profile.dob && (
+              <div>
+                <span className="font-semibold">Date of Birth:</span>{" "}
+                {profile.dob}
+              </div>
+            )}
+            {profile.location && (
+              <div>
+                <span className="font-semibold">Location:</span>{" "}
+                {profile.location}
+              </div>
+            )}
+            {profile.address && (
+              <div>
+                <span className="font-semibold">Address:</span>{" "}
+                {profile.address}
+              </div>
+            )}
+            {profile.pin_code && (
+              <div>
+                <span className="font-semibold">Pin Code:</span>{" "}
+                {profile.pin_code}
+              </div>
+            )}
+            {profile.profilePic && (
+              <div className="flex items-center gap-2">
+                <span className="font-semibold">Profile Pic:</span>{" "}
+                <Image
+                  src={profile.profilePic}
+                  alt="Profile Pic"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                  unoptimized
+                />
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Username Section */}
         <div className="w-full mt-6 flex flex-col items-center z-10">
           <label className="block text-base font-semibold mb-1 text-center w-full text-blue-900">
-            {isEditingUserName ? "Edit Username:" : "Username:"} <span className="font-bold text-blue-700">{userInfo?.user?.UserName}</span>
+            {isEditingUserName ? "Edit Username:" : "Username:"}{" "}
+            <span className="font-bold text-blue-700">
+              {userInfo?.user?.UserName}
+            </span>
           </label>
           <div className="flex items-center w-full justify-center gap-2 mt-1">
             <input
@@ -281,7 +360,14 @@ const ProfilePage = () => {
               disabled={loading}
               aria-label={isEditingUserName ? "Save username" : "Edit username"}
             >
-              {isEditingUserName ? <><FaSave className="mr-1" />Save</> : <FaEdit />}
+              {isEditingUserName ? (
+                <>
+                  <FaSave className="mr-1" />
+                  Save
+                </>
+              ) : (
+                <FaEdit />
+              )}
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1 text-center">
@@ -296,14 +382,17 @@ const ProfilePage = () => {
             </div>
           )}
         </div>
+
         {/* Divider */}
         <div className="w-full border-t border-blue-200 my-6"></div>
         {/* Add more profile actions/info here if needed */}
       </div>
+
       {/* Profile Info Card */}
       <div className="col-span-1 md:col-span-2 bg-white rounded-lg shadow p-4 sm:p-6 mt-4 md:mt-0">
         <h2 className="text-lg font-semibold mb-4">Profile Information</h2>
-        <form onSubmit={handleSaveProfile} className="space-y-4">
+
+        <form onSubmit={isProfileEmpty ? handleCreateProfile : handleUpdateProfile} className="space-y-4">
           <div>
             <label className="block text-sm font-medium mb-1">Bio</label>
             <textarea
@@ -370,10 +459,11 @@ const ProfilePage = () => {
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 rounded mt-2 text-sm sm:text-base"
             disabled={loading}
           >
-            {loading ? "Saving..." : "Save Profile"}
+            {loading ? (isProfileEmpty ? "Creating..." : "Updating...") : (isProfileEmpty ? "Create Profile" : "Update Profile")}
           </button>
         </form>
       </div>
+
       {/* Account Actions Card */}
       <div className="col-span-1 md:col-span-3 mt-4">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 w-full">
@@ -493,6 +583,7 @@ const ProfilePage = () => {
           </div>
         </div>
       )}
+
       {/* Delete Account Modal */}
       {showDeleteModal && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50 px-2">
