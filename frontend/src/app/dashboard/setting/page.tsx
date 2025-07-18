@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, ChangeEvent, FormEvent } from "react";
+import React, { useState, ChangeEvent, FormEvent ,useEffect} from "react";
 import userServices from "@/services/users/users.services.js";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -9,6 +9,21 @@ import { FaEye, FaEyeSlash, FaEdit, FaSave } from "react-icons/fa";
 const baseUrl = process.env.NEXT_PUBLIC_PUBLIC_API;
 
 const ProfilePage = () => {
+
+
+  type UserType = { user?: { UserName?: string; email?: string } };
+
+  const [userInfo, setUser] = useState<UserType>({});
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const userInfo = await userServices.getUserInfo();
+      setUser(userInfo);
+    };
+    fetchUserInfo();
+  }, []);
+
+
   const [profile, setProfile] = useState({
     bio: "",
     dob: "",
@@ -21,9 +36,8 @@ const ProfilePage = () => {
   const [loading, setLoading] = useState(false);
   const router = useRouter();
 
-  const userInfo = Cookies.get("userInfo");
-  const user = JSON.parse(userInfo || "{}");
-  const [userNameInput, setUserNameInput] = useState(user.userName || "");
+  
+  const [userNameInput, setUserNameInput] = useState(userInfo?.user?.UserName || "");
   const [isEditingUserName, setIsEditingUserName] = useState(false);
   // Modals
   const [showPasswordModal, setShowPasswordModal] = useState(false);
@@ -132,6 +146,9 @@ const ProfilePage = () => {
       if (resData.success) {
         setLoading(false);
         toast.success(resData.message);
+        // Fetch updated user info after successful name change
+        const updatedUserInfo = await userServices.getUserInfo();
+        setUser(updatedUserInfo);
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -183,74 +200,77 @@ const ProfilePage = () => {
     setShowDeleteModal(false);
   };
 
+  
   return (
     <div className="w-full mx-auto p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-4">
       {/* Profile Picture & Username Card */}
-      <div className="w-full bg-white rounded-lg shadow p-4 sm:p-6 flex flex-col items-center sm:w-full sm:col-span-1 md:col-span-1 md:w-full">
-        <h2 className="text-lg font-semibold mb-4 w-full text-center">
-          Profile Picture
-        </h2>
-        <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border mb-2 max-w-[128px] mx-auto flex items-center justify-center">
-          {profilePicFile ? (
-            <Image
-              src={URL.createObjectURL(profilePicFile)}
-              alt="Profile"
-              className="w-full h-full object-cover"
-              width={128}
-              height={128}
-              unoptimized
-            />
-          ) : profile.profilePic ? (
-            <Image
-              src={profile.profilePic}
-              alt="Profile"
-              className="w-full h-full object-cover"
-              width={128}
-              height={128}
-              unoptimized
-            />
-          ) : (
-            <span className="w-full h-full flex items-center justify-center text-gray-400 text-base sm:text-2xl">
-              No Image
-            </span>
-          )}
+      <div className="w-full bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl shadow-xl p-6 flex flex-col items-center sm:col-span-1 md:col-span-1 md:w-full border border-blue-200 relative">
+        {/* Decorative background circle */}
+        <div className="absolute -top-8 left-1/2 -translate-x-1/2 w-32 h-32 bg-blue-200 opacity-20 rounded-full z-0"></div>
+        {/* Profile Picture */}
+        <div className="relative z-10 mt-2">
+          <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white shadow-lg mb-2 mx-auto flex items-center justify-center bg-white">
+            {profilePicFile ? (
+              <Image
+                src={URL.createObjectURL(profilePicFile)}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                width={128}
+                height={128}
+                unoptimized
+              />
+            ) : profile.profilePic ? (
+              <Image
+                src={profile.profilePic}
+                alt="Profile"
+                className="w-full h-full object-cover"
+                width={128}
+                height={128}
+                unoptimized
+              />
+            ) : (
+              <span className="w-full h-full flex items-center justify-center text-gray-400 text-4xl bg-blue-100">
+                👤
+              </span>
+            )}
+          </div>
+          <input
+            type="file"
+            accept="image/*"
+            onChange={handlePicChange}
+            className="hidden"
+            ref={fileInputRef}
+            placeholder="Upload profile photo"
+          />
+          <button
+            type="button"
+            className="absolute bottom-2 right-2 bg-blue-600 hover:bg-blue-700 text-white p-2 rounded-full shadow-md transition-colors duration-200 text-lg"
+            disabled={loading}
+            onClick={() => fileInputRef.current && fileInputRef.current.click()}
+            aria-label="Add or update profile photo"
+          >
+            <FaEdit />
+          </button>
         </div>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handlePicChange}
-          className="hidden"
-          ref={fileInputRef}
-          placeholder="Upload profile photo"
-        />
-        <button
-          type="button"
-          className="mt-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded w-full sm:w-auto text-sm sm:text-base"
-          disabled={loading}
-          onClick={() => fileInputRef.current && fileInputRef.current.click()}
-        >
-          {loading ? "Uploading..." : "Add/Update Photo"}
-        </button>
-
         {/* Username Section */}
-        <div className="w-full mt-6 flex flex-col items-center">
-          <label className="block text-sm font-medium mb-1 text-center w-full">
-            Username : {user.UserName}
+        <div className="w-full mt-6 flex flex-col items-center z-10">
+          <label className="block text-base font-semibold mb-1 text-center w-full text-blue-900">
+            {isEditingUserName ? "Edit Username:" : "Username:"} <span className="font-bold text-blue-700">{userInfo?.user?.UserName}</span>
           </label>
-          <div className="flex items-center w-full justify-center gap-2">
+          <div className="flex items-center w-full justify-center gap-2 mt-1">
             <input
               type="text"
-              className="border rounded px-3 py-2 text-sm sm:text-base w-2/3 text-center"
+              className="border border-blue-200 rounded px-3 py-2 text-sm sm:text-base w-2/3 text-center focus:outline-none focus:ring-2 focus:ring-blue-400 transition-all"
               value={userNameInput}
               onChange={e => setUserNameInput(e.target.value)}
               disabled={!isEditingUserName}
             />
             <button
               type="button"
-              className={`ml-2 px-3 py-1 rounded text-sm font-semibold flex items-center justify-center ${
+              className={`ml-2 px-3 py-2 rounded-full text-lg font-semibold flex items-center justify-center shadow transition-colors duration-200 ${
                 isEditingUserName
                   ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "bg-gray-200 text-gray-700"
+                  : "bg-gray-200 hover:bg-gray-300 text-gray-700"
               }`}
               onClick={() => {
                 if (isEditingUserName) {
@@ -261,7 +281,7 @@ const ProfilePage = () => {
               disabled={loading}
               aria-label={isEditingUserName ? "Save username" : "Edit username"}
             >
-              {isEditingUserName ? <FaSave /> : <FaEdit />}
+              {isEditingUserName ? <><FaSave className="mr-1" />Save</> : <FaEdit />}
             </button>
           </div>
           <p className="text-xs text-gray-500 mt-1 text-center">
@@ -269,7 +289,16 @@ const ProfilePage = () => {
               ? "Enter new username and click Save"
               : "Click Edit to change your username"}
           </p>
+          {/* Email display if available */}
+          {userInfo?.user?.email && (
+            <div className="mt-2 text-sm text-blue-800 bg-blue-50 rounded px-2 py-1 w-fit mx-auto shadow-sm">
+              <span className="font-medium">Email:</span> {userInfo.user.email}
+            </div>
+          )}
         </div>
+        {/* Divider */}
+        <div className="w-full border-t border-blue-200 my-6"></div>
+        {/* Add more profile actions/info here if needed */}
       </div>
       {/* Profile Info Card */}
       <div className="col-span-1 md:col-span-2 bg-white rounded-lg shadow p-4 sm:p-6 mt-4 md:mt-0">

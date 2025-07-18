@@ -1,8 +1,8 @@
-import type { Metadata } from "next";
+"use client"
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from 'react-hot-toast';
-
+import { UserProvider } from "@/context/UserContext";
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -13,11 +13,6 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "NoteStash – A Full-Stack MERN Note-Taking App with User Auth & Smart Organization",
-  description: "NoteStash is a full-stack MERN note-taking application featuring user authentication and smart note organization for efficient productivity.",
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -25,10 +20,17 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <title>NoteStash - Your Personal Note App</title>
+        <meta name="description" content="NoteStash is your personal note-taking app. Organize, edit, and manage your notes easily and securely." />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        
+        <UserProvider>
+
+       
           {children}
         {/* Toaster with additional properties */}
         <Toaster
@@ -55,6 +57,7 @@ export default function RootLayout({
             },
           }}
           />
+           </UserProvider>
       </body>
     </html>
   );
