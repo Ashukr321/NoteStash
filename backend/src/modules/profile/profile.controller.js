@@ -48,7 +48,7 @@ const getProfileDetails = async (req, res, next) => {
     }
 
     // Try to fetch profile data
-    const profileData = await Profile.findOne({ user: userId }).lean().select("-user -_id");
+    const profileData = await Profile.findOne({ user: userId }).lean().select("-user");
 
     if (!profileData) {
       // Profile not found, but user exists: return only userName and email
