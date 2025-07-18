@@ -34,12 +34,6 @@ const LoginPage = () => {
           secure: true,
           path: "/",
         });
-
-        Cookies.set("userInfo", JSON.stringify(resData.user), {
-          expires: 7,
-          secure: true,
-          path: "/",
-        });
         toast.success(resData.message);
         router.refresh();
       }

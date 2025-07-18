@@ -5,6 +5,8 @@ import { FiSettings, FiLogOut } from "react-icons/fi";
 import { FiBookOpen } from "react-icons/fi";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import profileServices from "@/services/profiles/profiles.services";
+
 interface HeaderProps {
   onMenuClick?: () => void;
 }
@@ -13,6 +15,16 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
+  const [user, setUser] = useState({});
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const userInfo = await profileServices.getProfileDetails();
+      setUser(userInfo);
+    };
+    fetchUserInfo();
+  }, []);
+  console.log(user);
   // Close dropdown on outside click
   useEffect(() => {
     if (!dropdownOpen) return;
