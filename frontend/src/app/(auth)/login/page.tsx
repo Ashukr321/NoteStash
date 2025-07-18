@@ -34,6 +34,7 @@ const LoginPage = () => {
           path: "/",
         });
         toast.success(resData.message);
+        router.refresh();
       }
       if (!resData.success) {
         toast.error(resData.message);
