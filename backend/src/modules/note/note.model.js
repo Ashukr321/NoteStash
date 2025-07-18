@@ -30,10 +30,6 @@ const noteSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  attachments: {
-    type: [String],
-    default: []
-  },
 })
 
 const Notes = mongoose.model("Note", noteSchema);
