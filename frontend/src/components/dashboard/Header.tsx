@@ -5,26 +5,21 @@ import { FiSettings, FiLogOut } from "react-icons/fi";
 import { FiBookOpen } from "react-icons/fi";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import profileServices from "@/services/profiles/profiles.services";
 
+import { useUser } from "@/context/UserContext";
 interface HeaderProps {
   onMenuClick?: () => void;
 }
+
 
 const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
-  const [user, setUser] = useState({});
+  const { userInfo } = useUser();
 
-  useEffect(() => {
-    const fetchUserInfo = async () => {
-      const userInfo = await profileServices.getProfileDetails();
-      setUser(userInfo);
-    };
-    fetchUserInfo();
-  }, []);
-  console.log(user);
+  
+  
   // Close dropdown on outside click
   useEffect(() => {
     if (!dropdownOpen) return;
@@ -83,6 +78,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
           <span className="w-7 h-7 rounded-full bg-blue-200 flex items-center justify-center text-lg select-none">
             👤
           </span>
+          <span>{userInfo?.user?.UserName}</span>
           <svg
             className="w-3 h-3 ml-1 text-gray-500"
             fill="none"
@@ -97,6 +93,7 @@ const Header: React.FC<HeaderProps> = ({ onMenuClick }) => {
             />
           </svg>
         </button>
+
         {dropdownOpen && (
           <div className="absolute right-0 mt-2 w-36 bg-white shadow-lg z-10 rounded-md py-1 animate-fade-in text-sm">
             <Link
