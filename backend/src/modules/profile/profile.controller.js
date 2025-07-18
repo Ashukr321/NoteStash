@@ -46,15 +46,6 @@ const getProfileDetails = async (req, res, next) => {
       });
     } 
 
-    // Fetch user details, exclude password
-    const user = await User.findById(userId).select("-password");
-    if (!user) {
-     
-      return res.status(404).json({
-        success: false,
-        message: "User not found!"
-      });
-    }
 
     // Try to fetch profile data
     const profileData = await Profile.findOne({ user: userId }).lean().select("-user");
@@ -63,22 +54,15 @@ const getProfileDetails = async (req, res, next) => {
       return res.status(200).json({
         success: true,
         message: "Profile not found for this user!",
-        data: {
-          userName: user.UserName,
-          email: user.email
-        }
+       
       });
     }
-
-
     // Merge userName and email into response if profile exists
     return res.status(200).json({
       success: true,
       message: "Profile data fetched successfully!",
       data: {
         ...profileData,
-        userName: user.UserName,
-        email: user.email
       }
     });
 

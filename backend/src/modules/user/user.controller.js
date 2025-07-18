@@ -197,12 +197,33 @@ const deleteAccount = async (req, res, next) => {
   }
 };
 
+const getUserInfo = async (req, res, next) => {
+  try {
+    const userId = await req.userId;
+    if (!userId) {
+      const err = createError(400, "UserId Not Found");
+      return next(err);
+    }
+    const user = await User.findById(userId).select("-password");
+    return res.status(200).json({
+      success: true,
+      message: "userInfo fetch successfully!",
+      user: user
+    })
+  } catch (error) {
+    return next(error.message)
+  }
+}
+
+
 // exports all controllers 
 export {
   registerUser,
   loginUser,
   changePassword,
   changeUserName,
-  deleteAccount
+  deleteAccount,
+  getUserInfo
+
 };
 
