@@ -5,8 +5,6 @@ import { useRouter } from "next/navigation";
 import userServices from "@/services/users/users.services";
 import toast from "react-hot-toast";
 import Cookies from "js-cookie";
-import { strict } from "assert";
-import path from "path";
 const LoginPage = () => {
   const router = useRouter();
   const [form, setForm] = useState({
