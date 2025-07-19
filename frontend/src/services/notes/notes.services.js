@@ -225,7 +225,33 @@ const notesServices = {
     } catch (error) {
       return { success: false, message: error.message }
     }
-  }
+  },
+
+  // 9. /api/notes/dashboard-stats
+  async getDashboardStats() {
+    try {
+      const token = Cookies.get('token');
+      if (!token) {
+        toast.error("Token Not Found!");
+        return { success: false, message: "Token Not Found!" };
+      }
+
+      const response = await fetch(`${baseUrl}/api/notes/dashboard-stats`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      const resData = await response.json();
+      return resData;
+    } catch (error) {
+    
+      return { success: false, message: error.message }
+    }
+  },
+  
 }
 
 
