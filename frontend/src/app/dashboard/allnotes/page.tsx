@@ -237,8 +237,8 @@ const AllNotesPage = () => {
     }
   };
 
-  const handleView = () => {
-    router.push("/dashboard/allnotes/:nodeId");
+  const handleView = (noteId:string) => {
+    router.push(`/dashboard/allnotes/${noteId}`);
   };
 
   return (
@@ -258,7 +258,7 @@ const AllNotesPage = () => {
               onArchive={() => handleArchive(!note.isArchived, note._id)}
               onPin={() => handlePin(!note.isPinned, note._id)}
               onStar={() => handleStar(!note.isStarred, note._id)}
-              onView={() => handleView()}
+              onView={() => handleView(note._id)}
             />
           ))}
         </div>
