@@ -260,7 +260,7 @@ const addToArchive = async (req, res, next) => {
 
     return res.status(200).json({
       success: true,
-      message: "Note starred status updated successfully!",
+      message: "Note Archive status updated successfully!",
       note: updatedNoteResponse,
     })
   } catch (error) {
