@@ -279,6 +279,89 @@ frontend/
   - [LinkedIn](https://www.linkedin.com/in/ashukr321/)
   - [Instagram](https://www.instagram.com/ashukr321/)
 
+# Frontend (React/Next.js)
+
+## Getting Started (Frontend)
+
+### Prerequisites
+- **Node.js** (v16 or higher recommended)
+- **npm** (v8 or higher) or **yarn**
+
+### Installation & Setup
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. Create a `.env.local` file in the `frontend/` directory and set the following (example):
+   ```env
+   NEXT_PUBLIC_PUBLIC_API=https://notestash.onrender.com
+   ```
+   - Set this to your backend API URL.
+
+4. Start the development server:
+   ```bash
+   npm run dev
+   # or
+   yarn dev
+   ```
+   The app will run on [http://localhost:3000](http://localhost:3000) by default.
+
+### Project Structure (Frontend)
+
+```text
+frontend/
+  ├── src/
+  │   ├── app/                  # Next.js App Router
+  │   │   ├── (auth)/           # Auth pages
+  │   │   ├── dashboard/        # Main dashboard & features
+  │   │   ├── globals.css       # Global styles
+  │   │   └── layout.tsx        # Root layout
+  │   ├── components/           # Reusable UI components
+  │   ├── services/             # API service layer
+  │   ├── utils/                # Utility functions
+  │   └── context/              # React Context
+  ├── public/                   # Static assets
+  ├── package.json              # Dependencies and scripts
+  ├── tsconfig.json             # TypeScript config
+  └── ...
+```
+
+### Main Features
+- **Modern Next.js 13+ App Router**
+- **TypeScript** for type safety
+- **Tailwind CSS** for styling and responsive design
+- **React Hot Toast** for notifications
+- **React Icons** for UI icons
+- **API Service Layer** for clean data fetching
+- **Authentication** and protected routes
+- **Notes Management**: create, edit, pin, star, archive, delete, and restore notes
+- **Dashboard**: stats, recent notes, and quick actions
+- **Mobile Responsive**: fully responsive UI
+
+### Running in Production
+Build and start the production server:
+```bash
+npm run build
+npm start
+# or
+yarn build
+yarn start
+```
+
+### Useful Scripts
+- `npm run dev` — Start development server
+- `npm run build` — Build for production
+- `npm start` — Start production server
+- `npm run lint` — Run ESLint
+
+---
+
 
 
 
