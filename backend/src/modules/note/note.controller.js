@@ -320,8 +320,44 @@ const updateNote = async (req, res, next) => {
   } catch (error) {
     return next(error);
   }
+
 }
 
+const dashboardStatsData = async (req, res, next) => {
+  try {
+    const userId = req.userId;
+    const allNotes = await Notes.find({ user: userId }).sort({ createdAt: -1 });
 
-export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote, addToArchive, updateNote }
+    const totalNotes = allNotes.length;
+    const totalPinned = allNotes.filter(note => note.isPinned).length;
+    const totalStarred = allNotes.filter(note => note.isStarred).length;
+    const totalArchived = allNotes.filter(note => note.isArchived).length;
+    // Return only 1 recently added note
+    let recentlyAddedNotes;
+    if (allNotes.length > 0) {
+      const noteObj = allNotes[0].toObject();
+      delete noteObj.user;
+      recentlyAddedNotes = [noteObj];
+    } else {
+      recentlyAddedNotes = [];
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Dashboard stats fetched successfully!",
+      data: {
+        totalNotes,
+        totalPinned,
+        totalStarred,
+        totalArchived,
+        recentlyAddedNotes
+      }
+    });
+  } catch (error) {
+
+    return next(error);
+  }
+}
+
+export { createNotes, getAllNotes, getNoteById, deleteNote, togglePinNote, toggleStarredNote, addToArchive, updateNote, dashboardStatsData }
 
