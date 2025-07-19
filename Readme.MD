@@ -312,25 +312,6 @@ frontend/
    ```
    The app will run on [http://localhost:3000](http://localhost:3000) by default.
 
-### Project Structure (Frontend)
-
-```text
-frontend/
-  ├── src/
-  │   ├── app/                  # Next.js App Router
-  │   │   ├── (auth)/           # Auth pages
-  │   │   ├── dashboard/        # Main dashboard & features
-  │   │   ├── globals.css       # Global styles
-  │   │   └── layout.tsx        # Root layout
-  │   ├── components/           # Reusable UI components
-  │   ├── services/             # API service layer
-  │   ├── utils/                # Utility functions
-  │   └── context/              # React Context
-  ├── public/                   # Static assets
-  ├── package.json              # Dependencies and scripts
-  ├── tsconfig.json             # TypeScript config
-  └── ...
-```
 
 ### Main Features
 - **Modern Next.js 13+ App Router**
@@ -343,6 +324,55 @@ frontend/
 - **Notes Management**: create, edit, pin, star, archive, delete, and restore notes
 - **Dashboard**: stats, recent notes, and quick actions
 - **Mobile Responsive**: fully responsive UI
+
+### Screenshots
+
+Below are screenshots of the NoteStash application UI and features:
+
+#### Screenshot 1
+![Screenshot 1](project%20assets/1.png)
+
+#### Screenshot 2
+![Screenshot 2](project%20assets/2.png)
+
+#### Screenshot 3
+![Screenshot 3](project%20assets/3.png)
+
+#### Screenshot 4
+![Screenshot 4](project%20assets/4.png)
+
+#### Screenshot 5
+![Screenshot 5](project%20assets/5.png)
+
+#### Screenshot 6
+![Screenshot 6](project%20assets/6.png)
+
+#### Screenshot 7
+![Screenshot 7](project%20assets/7.png)
+
+#### Screenshot 8
+![Screenshot 8](project%20assets/8.png)
+
+#### Screenshot 9
+![Screenshot 9](project%20assets/9.png)
+
+#### Screenshot 10
+![Screenshot 10](project%20assets/10.png)
+
+#### Screenshot 11
+![Screenshot 11](project%20assets/11.png)
+
+#### Screenshot 12
+![Screenshot 12](project%20assets/12.png)
+
+#### Screenshot 13
+![Screenshot 13](project%20assets/13.png)
+
+#### Screenshot 14
+![Screenshot 14](project%20assets/14.png)
+
+#### Screenshot 15
+![Screenshot 15](project%20assets/15.png)
 
 ### Running in Production
 Build and start the production server:
