@@ -211,10 +211,10 @@ const notesServices = {
       if (isStarred !== undefined) payload.isStarred = isStarred;
 
       const response = await fetch(`${baseUrl}/api/notes/${noteId}`, {
-        method: "PATCH",
+        method: "PUT",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
+          Authorization: `Bearer ${token}`
         },
         body: JSON.stringify(payload)
       });
