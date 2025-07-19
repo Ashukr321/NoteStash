@@ -164,6 +164,114 @@ backend/
               └── user.routes.js
 ```
 
+## Frontend Folder Structure
+
+### Tech Stack & Dependencies
+
+#### 🚀 **Core Technologies**
+- **Next.js** (v15.3.5) - React framework with App Router
+- **React** (v19.0.0) - UI library
+- **TypeScript** (v5) - Type safety
+
+#### 🎨 **Styling & UI**
+- **Tailwind CSS** (v4) - Utility-first CSS framework
+- **React Icons** (v5.5.0) - Icon library
+- **React Hot Toast** (v2.5.2) - Toast notifications
+
+#### 🔧 **Development Tools**
+- **ESLint** (v9) - Code linting
+- **PostCSS** (v4) - CSS processing
+
+#### 🍪 **Utilities**
+- **js-cookie** (v3.0.5) - Cookie management
+
+### Project Structure
+
+```text
+frontend/
+  ├── .next/                    # Next.js build output
+  ├── node_modules/             # Dependencies
+  ├── public/                   # Static assets
+  │   ├── file.svg
+  │   ├── globe.svg
+  │   ├── next.svg
+  │   ├── vercel.svg
+  │   └── window.svg
+  ├── src/                      # Source code
+  │   ├── app/                  # Next.js App Router
+  │   │   ├── (auth)/           # Authentication routes (grouped)
+  │   │   │   ├── login/        # Login page
+  │   │   │   └── register/     # Registration page
+  │   │   ├── dashboard/        # Main dashboard
+  │   │   │   ├── allnotes/     # All notes view
+  │   │   │   ├── favnotes/     # Favorite notes view
+  │   │   │   ├── pinnednotes/  # Pinned notes view
+  │   │   │   ├── setting/      # User settings
+  │   │   │   ├── trashnotes/   # Trash/archived notes
+  │   │   │   ├── layout.tsx    # Dashboard layout
+  │   │   │   └── page.tsx      # Dashboard main page
+  │   │   ├── favicon.ico       # App icon
+  │   │   ├── globals.css       # Global styles
+  │   │   ├── layout.tsx        # Root layout
+  │   │   └── page.tsx          # Landing page
+  │   ├── components/           # Reusable components
+  │   │   ├── common/           # Shared components
+  │   │   ├── dashboard/        # Dashboard-specific components
+  │   │   │   ├── Header.tsx    # Dashboard header
+  │   │   │   └── Sidebar.tsx   # Navigation sidebar
+  │   │   └── landingPage/      # Landing page components
+  │   │       ├── Features.tsx  # Features section
+  │   │       ├── Fnq.tsx       # FAQ section
+  │   │       ├── Footer.tsx    # Footer component
+  │   │       ├── Hero.tsx      # Hero section
+  │   │       └── Navbar.tsx    # Navigation bar
+  │   ├── context/              # React Context
+  │   │   └── UserContext.tsx   # User authentication context
+  │   ├── pages/                # Pages directory (legacy)
+  │   │   ├── _app.tsx          # App wrapper
+  │   │   └── mainpage/         # Main page components
+  │   │       └── Main.tsx      # Main page component
+  │   ├── services/             # API service layer
+  │   │   ├── notes/            # Notes API services
+  │   │   │   └── notes.services.ts
+  │   │   ├── profiles/         # Profile API services
+  │   │   │   └── profiles.services.js
+  │   │   └── users/            # User API services
+  │   │       └── users.services.js
+  │   ├── utils/                # Utility functions
+  │   └── middleware.ts         # Next.js middleware
+  ├── envConfig.ts              # Environment configuration
+  ├── eslint.config.mjs         # ESLint configuration
+  ├── next-env.d.ts             # Next.js TypeScript definitions
+  ├── next.config.ts            # Next.js configuration
+  ├── package.json              # Dependencies and scripts
+  ├── package-lock.json         # Locked dependencies
+  ├── postcss.config.mjs        # PostCSS configuration
+  └── tsconfig.json             # TypeScript configuration
+```
+
+### Key Features
+
+#### 🎯 **Routing Structure**
+- **App Router**: Modern Next.js 13+ routing with file-based routing
+- **Route Groups**: Organized authentication routes in `(auth)` group
+- **Nested Layouts**: Dashboard with dedicated layout and nested routes
+
+#### 🧩 **Component Architecture**
+- **Modular Design**: Separated by feature (dashboard, landing page, common)
+- **Reusable Components**: Shared components in common directory
+- **Feature-specific**: Components organized by page/feature
+
+#### 🔌 **Service Layer**
+- **API Integration**: Organized service files for different API endpoints
+- **Type Safety**: Mix of TypeScript and JavaScript services
+- **Separation of Concerns**: Clean separation between UI and data layer
+
+#### 🎨 **Styling Approach**
+- **Tailwind CSS**: Utility-first styling with custom configurations
+- **Responsive Design**: Mobile-first approach with responsive utilities
+- **Component Styling**: Scoped styles within components
+
 ## Contributors
 
 - **Ashutosh Kumar**
