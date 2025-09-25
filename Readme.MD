@@ -134,34 +134,39 @@ The server will start on `http://localhost:8080` (or the port specified in your 
 
 ```text
 backend/
-  ├── app.js
-  ├── package.json
-  ├── package-lock.json
-  ├── env.example
-  ├── uploads/
-  └── src/
-      ├── config/
-      │   ├── connectDb.js
-      │   └── envConfig.js
-      ├── index.js
-      ├── middlewares/
-      │   ├── authMiddleware.js
-      │   └── globalErrorHandler.js
-      ├── utils/
-      │   └── cloudinary.js
-      └── modules/
-          ├── note/
-          │   ├── note.controller.js
-          │   ├── note.model.js
-          │   └── note.routes.js
-          ├── profile/
-          │   ├── profile.controller.js
-          │   ├── profile.model.js
-          │   └── profile.routes.js
-          └── user/
-              ├── user.controller.js
-              ├── user.model.js
-              └── user.routes.js
+├── app.js
+├── package.json
+├── package-lock.json
+├── env.example
+├── uploads/
+└── src/
+    ├── config/
+    │   ├── connectDb.js
+    │   ├── envConfig.js
+    │   └── swagger.js            <-- Swagger setup file
+    ├── index.js
+    ├── middlewares/
+    │   ├── authMiddleware.js
+    │   └── globalErrorHandler.js
+    ├── utils/
+    │   └── cloudinary.js
+    └── modules/
+        ├── user/
+        │   ├── user.controller.js
+        │   ├── user.model.js
+        │   ├── user.routes.js
+        │   └── user.swagger.js     <-- Swagger docs for user module
+        ├── profile/
+        │   ├── profile.controller.js
+        │   ├── profile.model.js
+        │   ├── profile.routes.js
+        │   └── profile.swagger.js  <-- Swagger docs for profile module
+        └── note/
+            ├── note.controller.js
+            ├── note.model.js
+            ├── note.routes.js
+            └── note.swagger.js     <-- Swagger docs for note module
+
 ```
 
 ## Frontend Folder Structure
